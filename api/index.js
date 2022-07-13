@@ -51,6 +51,7 @@ const options = {
 try {
     mongoose.connect(uri,options).then(()=>{
         console.log("*********Conectado a Mongo**************".bgGreen);
+        global.check_mqtt_superuser()
     },
     (err)=>{
         console.log("*********Coneccion fallida**************".red)

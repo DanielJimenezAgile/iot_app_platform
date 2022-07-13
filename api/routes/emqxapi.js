@@ -3,6 +3,7 @@ const router = express.Router()
 const axios = require('axios');
 const colors = require('colors');
 
+import EmqxAuthRule from "../models/emqx_auth.js";
 
 const auth ={
     auth:{
@@ -19,7 +20,7 @@ global.alarmResource = null
 //////////////////
 
 async function listResource() {
-    const url = "http://localhost:8085/api/v4/resources/"
+    const url = "http://"+process.env.emqx_host+":8085/api/v4/resources/"
     const res = await axios.get(url,auth)
     const sizeRes = res.data.data.length
     console.log(res.data.data);
@@ -56,12 +57,12 @@ async function listResource() {
 
 
 async function createResources(){
-const url = "http://localhost:8085/api/v4/resources"
+const url = "http://"+process.env.emqx_host+":8085/api/v4/resources"
 
 const saverData ={
     "type": "web_hook",
     "config" : {
-        url: "http://localhost:3001/api/saver-webhook",
+        url: "http://"+process.env.emqx_host+":3001/api/saver-webhook",
         headers:{
             token: process.env.emqx_api_token,
         },
@@ -73,7 +74,7 @@ const saverData ={
 const alarmData ={
     "type": "web_hook",
     "config" : {
-        url: "http://localhost:3001/api/alarm-webhook",
+        url: "http://"+process.env.emqx_host+":3001/api/alarm-webhook",
         headers:{
             token: process.env.emqx_api_token,
         },
@@ -110,8 +111,30 @@ listResource()
 }
 
 
+global.check_mqtt_superuser = async function checkMqttSuperuser (){
+    try {
+        const superUsers = await EmqxAuthRule.find({type:"superuser"});
+        if (superUsers.length > 0) {
+            return;
+        }else if(superUsers.length == 0){
+            await EmqxAuthRule.create({
+                userId:'123123',
+                username:'superuser',
+                password:'pass',
+                publish:["#"],
+                subscribe:["#"],
+                type:"superuser",
+                time:Date.now(),
+                updatedTime:Date.now(),
+            })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 setTimeout(() => {
     listResource()
-}, 1000);
+}, process.env.emqx_resource_delay);
 
 module.exports = router

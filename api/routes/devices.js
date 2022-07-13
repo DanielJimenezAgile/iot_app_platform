@@ -208,7 +208,7 @@ async function getSaverRules(userId) {
 
 async function updateSaveRuleStatus(emqxRuleId,status) {
 
-    const url = "http://localhost:8085/api/v4/rules/"+emqxRuleId
+    const url = "http://"+process.env.emqx_host+":8085/api/v4/rules/"+emqxRuleId
     console.log(url);
     const newRule = {
         enabled: status 
@@ -244,7 +244,7 @@ async function deleteSaverRule(dId) {
 
     try {
         const mongoRule = await SaverRoule.findOne({dId:dId})
-        const url = "http://localhost:8085/api/v4/rules/" + mongoRule.emqxRuleId
+        const url = "http://"+process.env.emqx_host+":8085/api/v4/rules/" + mongoRule.emqxRuleId
         const emqxRule = await axios.delete(url,auth)
         const deleted = await SaverRoule.deleteOne({dId:dId})
 
@@ -256,7 +256,7 @@ async function deleteSaverRule(dId) {
 }
 
 async function createSaverRoule(userId,dId,status) {
-    const url = "http://localhost:8085/api/v4/rules"
+    const url = "http://"+process.env.emqx_host+":8085/api/v4/rules"
 
     const topic = userId+"/"+dId+"/+/sdata"
 
@@ -343,7 +343,7 @@ try {
 
     if (rules.length > 0) {
     asyncForEach(rules, async rule => {
-        const url = "http://localhost:8085/api/v4/rules/" + rule.emqxRuleId;
+        const url = "http://"+process.env.emqx_host+":8085/api/v4/rules/" + rule.emqxRuleId;
         const res = await axios.delete(url, auth);
     });
 
