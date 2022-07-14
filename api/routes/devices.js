@@ -90,7 +90,7 @@ router.post("/devices",checkAuth,async(req,res)=>{
     }
 } );
 ///Delete Device
-router.delete("/device", checkAuth, async (req, res) => {
+router.delete("/devices", checkAuth, async (req, res) => {
     try {
       const userId = req.userData._id;
       const dId = req.query.dId;
