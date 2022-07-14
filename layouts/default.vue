@@ -143,9 +143,9 @@
 
         const deviceSubscribeTopic = this.$store.state.auth.userData._id + "/+/+/sdata"
         const notifSubscribeTopic = this.$store.state.auth.userData._id + "/+/+/notif"
-        const prefix = process.env.mqtt_prefix
+        const prefix = String(process.env.mqtt_pefix)
         const connectUrl = prefix + this.options.host+':'+ this.options.port + this.options.endpoint
-
+	console.log("CONNECTING TO ->> "+connectUrl)
         try {
           this.client = mqtt.connect(connectUrl,this.options)
         } catch (error) {
